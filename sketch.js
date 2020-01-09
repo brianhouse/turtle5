@@ -6,102 +6,134 @@ function setup() {
     canvas.parent('p5')
     turtle = new Turtle()
     angleMode(DEGREES)
-    frameRate(3)
+    noLoop()
 }
 
 function draw() {    
-    print(program)
     background(255)
     turtle.reset()
     turtle.run()
     turtle.display()
-    push()
-    strokeWeight(2)
-    noFill()
-    rect(0, 0, width, height)
-    pop()
 }
 
 function execute(value) {
-    print(value)
     eval(value)
+    draw()
+}
+
+function reset() {
+    program = []
+    draw()
+}
+
+function saveImage() {
+    print('saving image')
+    turtle.hidden = true
+    draw()
+    save()
+    turtle.hidden = false
+    draw()
 }
 
 ///
 
 function forward(x) {
-    for (let i=0; i<x; i++) {
-        program.push(turtle.forward)
-    }
+    program.push(() => { turtle.forward(x) })    
 }
 let fd = forward
 
 function backward(x) {
-    for (let i=0; i<x; i++) {
-        program.push(turtle.forward)
-    }
+    program.push(() => { turtle.backward(x) })    
 }
 let bk = backward
 
-function right(x) {
-    for (let i=0; i<x; i++) {
-        program.push(turtle.right)
-    }
+function right(a) {
+    program.push(() => { turtle.right(a) })
 }
 let rt = right
 
-function left(x) {
-    for (let i=0; i<x; i++) {
-        program.push(turtle.left)
-    }
+function left(a) {
+    program.push(() => { turtle.left(a) })
 }
 let lt = left
+
+function penup() {
+    program.push(() => { turtle.penup() })
+}
+let pu = penup
+
+function pendown() {
+    program.push(() => { turtle.pendown() })
+}
+let pd = pendown
+
+function pencolor(c) {
+    program.push(() => { turtle.pencolor(c) })
+}
+let pc = pencolor
+
+function penweight(c) {
+    program.push(() => { turtle.penweight(c) })
+}
+let pw = penweight
 
 ///
 
 class Turtle {
 
     constructor() {
-
+        this.hidden = false
+        this.reset()
     }
 
     reset() {
         this.x = width/2
         this.y = height/2
-        this.a = 0        
+        this.a = 0       
+        this.color = 0 
     }
 
-    forward() {
-        turtle.y -= 1
-        turtle.bounds()
+    forward(x) {
+        let v = p5.Vector.fromAngle(radians(this.a - 90))
+        for (let i=0; i<x; i++) {
+            let px = this.x
+            let py = this.y
+            this.x += v.x
+            this.y += v.y
+            line(px, py, this.x, this.y)
+            this.bounds()
+        }
     }
 
-    backward() {
-        turtle.y += 1
-        turtle.bounds()
+    backward(x) {
+        for (let i=0; i<x; i++) {
+            c2 = sqrt(a2 + b2)
+            this.y -= 1
+            this.bounds()
+        }
     }
 
     bounds() {
-        if (turtle.x < 0) {
-            turtle.x = width - 1
+        if (this.x < 0) {
+            this.x = width - 1 - (0 - this.x)
         }
-        if (turtle.x == width) {
-            turtle.x = 0
+        if (this.x >= width) {
+            this.x = 0 + (this.x - width)
         }
-        if (turtle.y < 0) {
-            turtle.y = height - 1
+        if (this.y < 0) {
+            this.y = height - 1 - (0 - this.y)
         }
-        if (turtle.y == height) {
-            turtle.y = 0
+        if (this.y >= height) {
+            this.y = 0 + (this.y - height)
         }
     }
 
-    right() {
-        turtle.a += 1
+    right(a) {
+        this.a += a
     }
 
-    left() {
-        turtle.a -= 1
+    left(a) {
+        this.a -= a
     }
 
     penup() {
@@ -109,22 +141,43 @@ class Turtle {
     }
 
     pendown() {
-        stroke(0)
+        print(this.color)
+        stroke(this.color)
+    }
+
+    pencolor(c) {
+        this.color = c
+        this.pendown()
+    }
+
+    penweight(s) {
+        strokeWeight(s)
+        this.pendown()
     }
 
     run() {
+        push()
+        stroke(this.color)
+        strokeWeight(1)
         for (let step of program) {
             step()
-            stroke(0)
-            point(this.x, this.y)
         }
+        pop()
     }
 
     display() {
+        if (this.hidden) {
+            print('hidden!')
+            return
+        } else {
+            print('shown!')
+        }
         push()
+        stroke(0)
+        strokeWeight(1)
         translate(this.x, this.y)
         rotate(this.a)
-        triangle(0, 0, -10, 20, 10, 20)
+        triangle(0, -20, -10, 0, 10, 0)
         pop()
     }
 

@@ -18,9 +18,13 @@
 
     <div id="main">
         <div id="p5"></div>
-        <br />
-        <textarea id="codearea"></textarea>
-        <a id="execute" href="javascript:execute(editor.getValue())"><br /><br /><br />RUN</a>
+        <div id="controls">
+            <textarea id="codearea"></textarea>
+            <a id="btn" href="javascript:execute(editor.getValue())">RUN</a>
+            <a id="btn" href="javascript:reset()">RESET</a>
+            <a id="btn" href="javascript:saveText()">TXT</a>
+            <a id="btn" href="javascript:saveImage()">PNG</a>
+        </div>
     </div>
 
     <script>
