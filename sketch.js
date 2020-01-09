@@ -30,9 +30,28 @@ function saveImage() {
     print('saving image')
     turtle.hidden = true
     draw()
-    save()
+    save('turtle.png')
     turtle.hidden = false
     draw()
+}
+
+function saveText(value) {
+    let textToWrite = value.replace(/\n/g, "\r\n")
+    let textFileAsBlob = new Blob([textToWrite], {type:'text/plain'})
+    let fileNameToSaveAs = "turtle.txt"
+    let downloadLink = document.createElement("a")
+    downloadLink.download = fileNameToSaveAs
+    downloadLink.innerHTML = "LINKTITLE"
+    window.URL = window.URL || window.webkitURL
+    downloadLink.href = window.URL.createObjectURL(textFileAsBlob)
+    downloadLink.onclick = destroyClickedElement
+    downloadLink.style.display = "none"
+    document.body.appendChild(downloadLink)
+    downloadLink.click()
+}
+
+function destroyClickedElement(event) {
+    document.body.removeChild(event.target)
 }
 
 ///
