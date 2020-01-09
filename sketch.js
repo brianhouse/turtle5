@@ -17,7 +17,18 @@ function draw() {
 }
 
 function execute(value) {
-    eval(value)
+    let ix = 0
+    try {
+        value = value.replace(/repeat\(/g, (s) => {
+            return "let ix" + ix + "=0;while(ix" + (ix++) + "++<"
+        })
+        print(value)
+        eval(value)
+    } catch (e) {
+        if (e instanceof SyntaxError) {
+            alert(e.message)
+        }
+    }    
     draw()
 }
 
@@ -27,7 +38,6 @@ function reset() {
 }
 
 function saveImage() {
-    print('saving image')
     turtle.hidden = true
     draw()
     save('turtle.png')
@@ -160,7 +170,6 @@ class Turtle {
     }
 
     pendown() {
-        print(this.color)
         stroke(this.color)
     }
 
@@ -185,12 +194,7 @@ class Turtle {
     }
 
     display() {
-        if (this.hidden) {
-            print('hidden!')
-            return
-        } else {
-            print('shown!')
-        }
+        if (this.hidden) return
         push()
         stroke(0)
         strokeWeight(1)

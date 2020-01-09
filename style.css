@@ -45,7 +45,7 @@ html, body {
     margin-top: 20px;
     margin-right: 20px;
     height: 14px;
-    width: 30px;
+    /*width: 30px;*/
     float: left;
     padding: 8px;
     font: 12px monospace;
