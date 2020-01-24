@@ -2,14 +2,14 @@
 
 <head>
     <title>Turtle</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <!-- https://codemirror.net/doc/manual.html -->
     <link rel="stylesheet" href="codemirror.css">
-    <link rel="stylesheet" href="style.css">    
+    <link rel="stylesheet" href="style.css">
     <script src="codemirror.js"></script>
-    <script src="javascript.js"></script>    
+    <script src="javascript.js"></script>
     <script src="p5.js"></script>
-    <script src="sketch.js"></script>      
+    <script src="sketch.js"></script>
     <style type="text/css">
     </style>
 </head>
@@ -22,15 +22,15 @@
             <textarea id="codearea"></textarea>
             <a id="btn" href="javascript:execute(editor.getValue())">RUN</a>
             <a id="btn" href="javascript:reset()">RESET</a>
-            <a id="btn" href="javascript:saveText(editor.getValue())">TXT</a>
-            <a id="btn" href="javascript:saveImage()">PNG</a>
+            <a id="btn" href="javascript:saveText(editor.getValue())">SAVE CODE</a>
+            <a id="btn" href="javascript:saveImage()" style="margin-right: 0px;">SAVE IMAGE</a>
         </div>
     </div>
 
     <script>
         let codearea = document.getElementById('codearea')
         let editor = CodeMirror.fromTextArea(codearea, { lineNumbers: true });
-    </script>  
+    </script>
 
 </body>
 

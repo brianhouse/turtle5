@@ -22,7 +22,6 @@ function execute(value) {
         value = value.replace(/repeat\(/g, (s) => {
             return "let ix" + ix + "=0;while(ix" + (ix++) + "++<"
         })
-        print(value)
         eval(value)
     } catch (e) {
         if (e instanceof SyntaxError) {
@@ -101,8 +100,8 @@ function pencolor(c) {
 }
 let pc = pencolor
 
-function penweight(c) {
-    program.push(() => { turtle.penweight(c) })
+function penweight(w) {
+    program.push(() => { turtle.penweight(w) })
 }
 let pw = penweight
 
@@ -120,6 +119,8 @@ class Turtle {
         this.y = height/2
         this.a = 0
         this.color = 0
+        this.weight = 1
+        this.pendown = true
     }
 
     forward(x) {
@@ -129,15 +130,21 @@ class Turtle {
             let py = this.y
             this.x += v.x
             this.y += v.y
-            line(px, py, this.x, this.y)        // will the plotter do this smooth? add things here
+            line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
             this.bounds()
         }
     }
 
     backward(x) {
-        right(180)
-        forward(x)
-        left(180)
+        let v = p5.Vector.fromAngle(radians(this.a - 90))
+        for (let i=0; i<x; i++) {
+            let px = this.x
+            let py = this.y
+            this.x -= v.x
+            this.y -= v.y
+            line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
+            this.bounds()
+        }
     }
 
     bounds() {
@@ -164,27 +171,33 @@ class Turtle {
     }
 
     penup() {
+        this.pendown = false
         noStroke()
     }
 
     pendown() {
+        this.pendown = true
         stroke(this.color)
     }
 
     pencolor(c) {
         this.color = c
-        this.pendown()
+        if (this.pendown) {
+            pendown()
+        }
     }
 
-    penweight(s) {
-        strokeWeight(s)
-        this.pendown()
+    penweight(w) {
+        this.weight = w
+        strokeWeight(w)
     }
 
     run() {
         push()
-        stroke(this.color)
-        strokeWeight(1)
+        if (this.pendown) {
+            stroke(this.color)
+        }
+        strokeWeight(this.weight)
         for (let step of program) {
             step()
         }
