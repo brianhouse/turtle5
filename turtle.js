@@ -1,12 +1,19 @@
-let turtle
-let program = []
+const WIDTH = 640
+const HEIGHT = 480
 
 function setup() {
     let canvas = createCanvas(640, 480)
     canvas.parent('p5')
-    turtle = new Turtle()
     angleMode(DEGREES)
     noLoop()
+    // turtle.radians = radians
+    turtle.push = push
+    turtle.pop = pop
+    turtle.Vector = p5.Vector
+    turtle.line = line
+    turtle.stroke = stroke
+    turtle.noStroke = noStroke
+    turtle.strokeWeight = strokeWeight
 }
 
 function draw() {
@@ -16,7 +23,7 @@ function draw() {
     turtle.display()
 }
 
-function execute(value) {
+function load(value) {
     let ix = 0
     try {
         value = value.replace(/repeat\(/g, (s) => {
@@ -27,12 +34,12 @@ function execute(value) {
         if (e instanceof SyntaxError) {
             alert(e.message)
         }
+        console.log(e)
     }
-    draw()
 }
 
 function reset() {
-    program = []
+    turtle.program = []
     draw()
 }
 
@@ -66,42 +73,42 @@ function destroyClickedElement(event) {
 ///
 
 function forward(x) {
-    program.push(() => { turtle.forward(x) })
+    turtle.program.push(() => { turtle.forward(x) })
 }
 let fd = forward
 
 function backward(x) {
-    program.push(() => { turtle.backward(x) })
+    turtle.program.push(() => { turtle.backward(x) })
 }
 let bk = backward
 
 function right(a) {
-    program.push(() => { turtle.right(a) })
+    turtle.program.push(() => { turtle.right(a) })
 }
 let rt = right
 
 function left(a) {
-    program.push(() => { turtle.left(a) })
+    turtle.program.push(() => { turtle.left(a) })
 }
 let lt = left
 
 function penup() {
-    program.push(() => { turtle.penup() })
+    turtle.program.push(() => { turtle.penup() })
 }
 let pu = penup
 
 function pendown() {
-    program.push(() => { turtle.pendown() })
+    turtle.program.push(() => { turtle.pendown() })
 }
 let pd = pendown
 
 function pencolor(c) {
-    program.push(() => { turtle.pencolor(c) })
+    turtle.program.push(() => { turtle.pencolor(c) })
 }
 let pc = pencolor
 
 function penweight(w) {
-    program.push(() => { turtle.penweight(w) })
+    turtle.program.push(() => { turtle.penweight(w) })
 }
 let pw = penweight
 
@@ -111,54 +118,55 @@ class Turtle {
 
     constructor() {
         this.hidden = false
+        this.program = []
         this.reset()
     }
 
     reset() {
-        this.x = width/2
-        this.y = height/2
+        this.x = WIDTH/2
+        this.y = HEIGHT/2
         this.a = 0
         this.color = 0
         this.weight = 1
-        this.pendown = true
+        this.pdown = true
     }
 
     forward(x) {
-        let v = p5.Vector.fromAngle(radians(this.a - 90))
+        let v = this.Vector.fromAngle(this.radians(this.a - 90))
         for (let i=0; i<x; i++) {
             let px = this.x
             let py = this.y
             this.x += v.x
             this.y += v.y
-            line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
+            turtle.line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
             this.bounds()
         }
     }
 
     backward(x) {
-        let v = p5.Vector.fromAngle(radians(this.a - 90))
+        let v = this.Vector.fromAngle(radians(this.a - 90))
         for (let i=0; i<x; i++) {
             let px = this.x
             let py = this.y
             this.x -= v.x
             this.y -= v.y
-            line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
+            this.line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
             this.bounds()
         }
     }
 
     bounds() {
         if (this.x < 0) {
-            this.x = width - 1 - (0 - this.x)
+            this.x = WIDTH - 1 - (0 - this.x)
         }
-        if (this.x >= width) {
-            this.x = 0 + (this.x - width)
+        if (this.x >= WIDTH) {
+            this.x = 0 + (this.x - WIDTH)
         }
         if (this.y < 0) {
-            this.y = height - 1 - (0 - this.y)
+            this.y = HEIGHT - 1 - (0 - this.y)
         }
-        if (this.y >= height) {
-            this.y = 0 + (this.y - height)
+        if (this.y >= HEIGHT) {
+            this.y = 0 + (this.y - HEIGHT)
         }
     }
 
@@ -171,40 +179,41 @@ class Turtle {
     }
 
     penup() {
-        this.pendown = false
-        noStroke()
+        this.pdown = false
+        this.noStroke()
     }
 
     pendown() {
-        this.pendown = true
-        stroke(this.color)
+        this.pdown = true
+        this.stroke(this.color)
     }
 
     pencolor(c) {
         this.color = c
-        if (this.pendown) {
-            pendown()
+        if (this.pdown) {
+            this.pendown()
         }
     }
 
     penweight(w) {
         this.weight = w
-        strokeWeight(w)
+        this.strokeWeight(w)
     }
 
     run() {
-        push()
-        if (this.pendown) {
-            stroke(this.color)
+        this.push()
+        if (this.pdown) {
+            this.stroke(this.color)
         }
-        strokeWeight(this.weight)
-        for (let step of program) {
+        this.strokeWeight(this.weight)
+        for (let step of turtle.program) {
             step()
         }
-        pop()
+        this.pop()
     }
 
     display() {
+        // p5 only
         if (this.hidden) return
         push()
         stroke(0)
@@ -215,4 +224,15 @@ class Turtle {
         pop()
     }
 
+    radians(degrees) {
+        return degrees * (Math.PI / 180.0)
+    }
+
+}
+
+const turtle = new Turtle()
+
+if (typeof exports !== 'undefined') {
+    exports.load = load
+    exports.turtle = turtle
 }
