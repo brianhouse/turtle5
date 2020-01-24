@@ -9,7 +9,7 @@ function setup() {
     noLoop()
 }
 
-function draw() {    
+function draw() {
     background(255)
     turtle.reset()
     turtle.run()
@@ -28,7 +28,7 @@ function execute(value) {
         if (e instanceof SyntaxError) {
             alert(e.message)
         }
-    }    
+    }
     draw()
 }
 
@@ -67,12 +67,12 @@ function destroyClickedElement(event) {
 ///
 
 function forward(x) {
-    program.push(() => { turtle.forward(x) })    
+    program.push(() => { turtle.forward(x) })
 }
 let fd = forward
 
 function backward(x) {
-    program.push(() => { turtle.backward(x) })    
+    program.push(() => { turtle.backward(x) })
 }
 let bk = backward
 
@@ -118,8 +118,8 @@ class Turtle {
     reset() {
         this.x = width/2
         this.y = height/2
-        this.a = 0       
-        this.color = 0 
+        this.a = 0
+        this.color = 0
     }
 
     forward(x) {
@@ -129,17 +129,15 @@ class Turtle {
             let py = this.y
             this.x += v.x
             this.y += v.y
-            line(px, py, this.x, this.y)
+            line(px, py, this.x, this.y)        // will the plotter do this smooth? add things here
             this.bounds()
         }
     }
 
     backward(x) {
-        for (let i=0; i<x; i++) {
-            c2 = sqrt(a2 + b2)
-            this.y -= 1
-            this.bounds()
-        }
+        right(180)
+        forward(x)
+        left(180)
     }
 
     bounds() {
