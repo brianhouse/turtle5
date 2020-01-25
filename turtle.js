@@ -72,13 +72,13 @@ function destroyClickedElement(event) {
 
 ///
 
-function forward(x) {
-    turtle.program.push(() => { turtle.forward(x) })
+function forward(d) {
+    turtle.program.push(() => { turtle.forward(d) })
 }
 let fd = forward
 
-function backward(x) {
-    turtle.program.push(() => { turtle.backward(x) })
+function backward(d) {
+    turtle.program.push(() => { turtle.backward(d) })
 }
 let bk = backward
 
@@ -131,43 +131,22 @@ class Turtle {
         this.pdown = true
     }
 
-    forward(x) {
+    forward(d) {
         let v = this.Vector.fromAngle(this.radians(this.a - 90))
-        for (let i=0; i<x; i++) {
-            let px = this.x
-            let py = this.y
-            this.x += v.x
-            this.y += v.y
-            turtle.line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
-            this.bounds()
-        }
+        let px = this.x
+        let py = this.y
+        this.x += v.x * d
+        this.y += v.y * d
+        turtle.line(px, py, this.x, this.y)
     }
 
-    backward(x) {
-        let v = this.Vector.fromAngle(radians(this.a - 90))
-        for (let i=0; i<x; i++) {
-            let px = this.x
-            let py = this.y
-            this.x -= v.x
-            this.y -= v.y
-            this.line(px, py, this.x, this.y)    // will the plotter do this smooth? add things here
-            this.bounds()
-        }
-    }
-
-    bounds() {
-        if (this.x < 0) {
-            this.x = WIDTH - 1 - (0 - this.x)
-        }
-        if (this.x >= WIDTH) {
-            this.x = 0 + (this.x - WIDTH)
-        }
-        if (this.y < 0) {
-            this.y = HEIGHT - 1 - (0 - this.y)
-        }
-        if (this.y >= HEIGHT) {
-            this.y = 0 + (this.y - HEIGHT)
-        }
+    backward(d) {
+        let v = this.Vector.fromAngle(this.radians(this.a - 90))
+        let px = this.x
+        let py = this.y
+        this.x -= v.x * d
+        this.y -= v.y * d
+        turtle.line(px, py, this.x, this.y)
     }
 
     right(a) {
@@ -235,4 +214,6 @@ const turtle = new Turtle()
 if (typeof exports !== 'undefined') {
     exports.load = load
     exports.turtle = turtle
+    exports.canvas_width = WIDTH
+    exports.canvas_height = HEIGHT
 }
