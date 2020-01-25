@@ -48,6 +48,12 @@ ad.disconnect()
 turtle.line = function(x1, y1, x2, y2) {
     let x = X + ((x2 / canvas_width) * PLOT_WIDTH)
     let y = Y + ((y2 / canvas_height) * PLOT_HEIGHT)
+    if (x > PLOT_WIDTH) {
+        x = PLOT_WIDTH
+    }
+    if (y > PLOT_HEIGHT) {
+        y = PLOT_HEIGHT
+    }
     if (turtle.pdown) {
         print('ad.lineto(' + x + ',' + y + ')')
     } else {
