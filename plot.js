@@ -27,6 +27,8 @@ turtle.pop = function() {}
 turtle.stroke = function(n) {}
 turtle.noStroke = function() {}
 turtle.strokeWeight = function(n) {}
+turtle.background = function(n) {}
+turtle.display = function() {}
 
 const header = `
 from pyaxidraw import axidraw
@@ -64,5 +66,5 @@ turtle.line = function(x1, y1, x2, y2) {
 // simulate the turtle steps
 print(header)
 load(program)
-turtle.run()
+turtle.runInstant()
 print(footer)

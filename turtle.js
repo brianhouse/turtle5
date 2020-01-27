@@ -6,7 +6,6 @@ function setup() {
     canvas.parent('p5')
     angleMode(DEGREES)
     noLoop()
-    // turtle.radians = radians
     turtle.push = push
     turtle.pop = pop
     turtle.Vector = p5.Vector
@@ -14,16 +13,18 @@ function setup() {
     turtle.stroke = stroke
     turtle.noStroke = noStroke
     turtle.strokeWeight = strokeWeight
+    turtle.background = background
+    background(255)
+    turtle.runInstant()
 }
 
-function draw() {
-    background(255)
-    turtle.reset()
-    turtle.run()
-    turtle.display()
+function run(code) {
+    load(code)
+    turtle.runAnimate()
 }
 
 function load(value) {
+    turtle.program = []
     let ix = 0
     try {
         value = value.replace(/repeat\(/g, (s) => {
@@ -31,24 +32,17 @@ function load(value) {
         })
         eval(value)
     } catch (e) {
-        if (e instanceof SyntaxError) {
-            alert(e.message)
-        }
+        alert(e.message)
         console.log(e)
     }
 }
 
-function reset() {
-    turtle.program = []
-    draw()
-}
-
 function saveImage() {
     turtle.hidden = true
-    draw()
+    turtle.runInstant()
     save('turtle.png')
     turtle.hidden = false
-    draw()
+    turtle.runInstant()
 }
 
 function saveText(value) {
@@ -119,16 +113,15 @@ class Turtle {
     constructor() {
         this.hidden = false
         this.program = []
-        this.reset()
     }
 
-    reset() {
+    home() {
         this.x = WIDTH/2
         this.y = HEIGHT/2
         this.a = 0
-        this.color = 0
-        this.weight = 1
         this.pdown = true
+        this.pencolor(0)
+        this.penweight(1)
     }
 
     forward(d) {
@@ -179,16 +172,39 @@ class Turtle {
         this.strokeWeight(w)
     }
 
-    run() {
+    runInstant() {
+        this.background(255)
         this.push()
         if (this.pdown) {
             this.stroke(this.color)
         }
         this.strokeWeight(this.weight)
+        turtle.home()
         for (let step of turtle.program) {
             step()
         }
         this.pop()
+        this.display()
+    }
+
+    runAnimate() {
+        for (let s in turtle.program) {
+            let step = function () {
+                this.background(255)
+                this.push()
+                if (this.pdown) {
+                    this.stroke(this.color)
+                }
+                this.strokeWeight(this.weight)
+                turtle.home()
+                for (let p in turtle.program.slice(0, s)) {
+                    turtle.program[p]()
+                }
+                this.pop()
+                turtle.display()
+            }
+            setTimeout(step, s * 10)
+        }
     }
 
     display() {
@@ -197,9 +213,10 @@ class Turtle {
         push()
         stroke(0)
         strokeWeight(1)
+        fill(245)
         translate(this.x, this.y)
         rotate(this.a)
-        triangle(0, -20, -10, 0, 10, 0)
+        triangle(0, -20, -7, 0, 7, 0)
         pop()
     }
 
