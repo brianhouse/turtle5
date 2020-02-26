@@ -66,6 +66,10 @@ function destroyClickedElement(event) {
 
 ///
 
+function home() {
+    turtle.program.push(() => { turtle.home() })
+}
+
 function forward(d) {
     turtle.program.push(() => { turtle.forward(d) })
 }
@@ -115,13 +119,22 @@ class Turtle {
         this.program = []
     }
 
-    home() {
+    reset() {
         this.x = WIDTH/2
         this.y = HEIGHT/2
         this.a = 0
         this.pdown = true
         this.pencolor(0)
         this.penweight(1)
+    }
+
+    home() {
+        let px = this.x
+        let py = this.y
+        this.x = WIDTH/2
+        this.y = HEIGHT/2
+        turtle.line(px, py, this.x, this.y)
+        this.a = 0
     }
 
     forward(d) {
@@ -179,7 +192,7 @@ class Turtle {
             this.stroke(this.color)
         }
         this.strokeWeight(this.weight)
-        turtle.home()
+        turtle.reset()
         for (let step of turtle.program) {
             step()
         }
@@ -188,7 +201,7 @@ class Turtle {
     }
 
     runAnimate() {
-        for (let s in turtle.program) {
+        for (let s=0; s<turtle.program.length; s++) {
             let step = function () {
                 this.background(255)
                 this.push()
@@ -196,8 +209,8 @@ class Turtle {
                     this.stroke(this.color)
                 }
                 this.strokeWeight(this.weight)
-                turtle.home()
-                for (let p in turtle.program.slice(0, s)) {
+                turtle.reset()
+                for (let p=0; p<=s; p++) {
                     turtle.program[p]()
                 }
                 this.pop()
